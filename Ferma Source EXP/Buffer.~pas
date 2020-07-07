@@ -1,0 +1,99 @@
+interface 
+ uses Ferm_DAt;
+type
+PELFerm = ^ElFerm;
+ElFerm=record
+Next:PElferm;
+Prev:PElferm;
+F:TFerm;
+end;
+Tbuffer=Class(TObject)
+public
+FIrstE:PELFerm; 
+LAstE:PELFerm
+Current:PELFerm; 
+constructor Create(F:Tferm);
+procedure Add(F:Tferm);
+procedure Delete();
+procedure next();
+procedure prev();
+procedure first();
+procedure Last();
+Destructor Destroy();
+end;
+
+implementation
+
+COnstructor Tbuffer.Create(F:TFerm);  //Создание буфера
+var FB:PELferm;
+begin
+new(FB);
+FB^.Next:=nil;
+FB^.Prev:=nil;
+FB^.F:=Tferm.Create;
+FB^.F.Assign(F);
+FirstE:=FB;
+LASTE:=FB;
+CUrrent:=FB;
+end;
+
+Procedure Tbuffer.Add(F:TFerm);  //Добавление элемента в буфер
+var BF:PELFerm;
+begin
+Delete();
+new(BF);
+BF^.F:=Tferm.Create;
+BF^.F.Assign(F);
+BF^.Next:=nil;
+BF^.Prev:=Current;
+Current^.Next:=BF;
+LastE:=BF;
+Current:=Current^.Next;
+end;
+
+Procedure Tbuffer.Delete(); //Удаление элемента из буфера
+ var BF:PELFerm;
+begin
+BF:=Current^.Next;
+Current^.Next:=nil;
+if BF<>nil then BF^.Prev:=nil;
+while BF<>nil do begin
+if BF^.Prev<>nil then Dispose(BF^.Prev);
+BF:=BF^.Next;
+                   end;
+Dispose(BF);
+end;
+
+Procedure Tbuffer.next(); //Шаг вперед
+begin
+IF Current^.Next<>nil then Current:=Current^.Next;
+end;
+
+Procedure Tbuffer.prev();  //Шаг назад
+begin
+if Current^.Prev<>nil then Current:=Current^.Prev;
+end;
+
+Procedure Tbuffer.first();  //Переход в начало
+begin
+Current:=FirstE;
+end;
+
+Procedure Tbuffer.Last(); //Переход в конец
+begin
+Current:=LastE;
+end;
+
+Destructor Tbuffer.Destroy(); //Удаление буфера
+ var BF:PELFerm;
+begin
+BF:=FirstE;
+BF^.Prev:=nil;
+while BF<>nil do begin
+if BF^.Prev<>nil then Dispose(BF^.Prev);
+BF:=BF^.Next;
+                   end;
+Dispose(BF);
+end;
+end.
+

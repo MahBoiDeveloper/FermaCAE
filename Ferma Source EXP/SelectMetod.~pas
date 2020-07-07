@@ -1,0 +1,150 @@
+unit SelectMetod;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, Buttons, ExtCtrls;
+
+type
+  TFerma_SelectMetod = class(TForm)
+    BitBtn1: TBitBtn;
+    BitBtn2: TBitBtn;
+    RadioGroup1: TRadioGroup;
+    procedure BitBtn2Click(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure BitBtn1Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+  private
+    { Private declarations }
+  public
+function  Get_dll_name(path:string):string;
+function  Get_dll_ext(path:string):pchar;
+    { Public declarations }
+  end;
+type
+     TMethodProc=procedure();
+     TMethodFunc=function():Pchar;
+var
+  Ferma_SelectMetod: TFerma_SelectMetod;
+     LibHandle:THandle;
+     DllName:string;
+     sp:TMethodProc;
+     sf:TMethodFunc;
+      implementation
+
+uses v2param, vc8Param, FermOptParam, Ferma_M, main, VC1Form1,NewOptParam;
+{$R *.DFM}
+
+
+
+
+
+    function TFerma_SelectMetod.Get_dll_name(path:string):string;
+ var
+     LibHandle:THandle;
+     sf:TMethodFunc;
+     r:real;
+ begin
+    LibHandle:=LoadLibrary(PChar(path));
+    @sf   :=GetProcAddress(LibHandle,'Get_Name');
+       try
+     result:=sf();
+       except
+     MessageDlg('Ошибка в библиотеке',mtError,[mbOk],0);
+       end;
+  FreeLibrary(LibHandle);
+  end;
+
+
+
+      function TFerma_SelectMetod.Get_dll_ext(path:string):Pchar;
+ var
+     LibHandle:THandle;
+     sf:TMethodFunc;
+     r:real;
+ begin
+    LibHandle:=LoadLibrary(PChar(path));
+    @sf   :=GetProcAddress(LibHandle,'Get_Ext');
+       try
+     result:=sf;
+       except
+     MessageDlg('Ошибка в библиотеке',mtError,[mbOk],0);
+       end;
+//  FreeLibrary(LibHandle);
+  end;
+
+
+
+
+
+ procedure TFerma_SelectMetod.BitBtn2Click(Sender: TObject);
+begin
+Close;
+end;
+
+procedure TFerma_SelectMetod.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+    Action:=caFree;
+    Ferma_SelectMetod:=nil;
+end;
+
+procedure TFerma_SelectMetod.BitBtn1Click(Sender: TObject);
+ type
+   THelloWorld = procedure(fn:pchar);
+
+var
+     LibHandle:THandle;
+     DllName:string;
+     sp:TMethodProc;
+     i:integer;
+     sp1:THelloWorld;
+     Action: TCloseAction;
+     begin
+
+     i:=Ferma_SelectMetod.RadioGroup1.ItemIndex;
+     i:=Ferma_SelectMetod.RadioGroup1.ItemIndex;
+
+
+  case Ferma_SelectMetod.RadioGroup1.ItemIndex of
+  0:   begin
+
+        Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).SolveOpt_MnuClick(Sender);
+
+     end;
+  1: begin
+     if VC1Form=nil then
+         VC1Form:=TVC1Form.Create(self);
+
+     VC1Form.showForm(0);
+     end;
+  2: begin
+     if VC1Form=nil then
+         VC1Form:=TVC1Form.Create(self);
+
+     VC1Form.showForm(1);
+     end;
+     end;
+
+
+     if Ferma_SelectMetod.RadioGroup1.ItemIndex > 2 then
+     begin
+     index:=Ferma_SelectMetod.RadioGroup1.ItemIndex;
+     FormClose(Sender,Action);
+     NewfermOptParam_form.ShowModal;
+     end;
+
+
+end;
+
+
+procedure TFerma_SelectMetod.FormCreate(Sender: TObject);
+var i:integer;
+
+begin
+for i:=0 to list.Count-1 do
+RadioGroup1.items.Add(Get_dll_name(list[i]));
+end;
+
+end.

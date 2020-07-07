@@ -1,0 +1,312 @@
+[Closed Files]
+File_0=SourceModule,'E:\Program Files\Borland\Delphi7\Projects\Ferma\visio_pb.pas',0,1,1,1,1,0,0
+File_1=SourceModule,'e:\program files\borland\delphi7\source\vcl\Forms.pas',0,1,5109,27,5138,0,0
+File_2=SourceModule,'E:\Program Files\Borland\Delphi7\Projects\Ferma\Ferma_FD.pas',0,1,416,21,447,0,0
+File_3=SourceModule,'E:\Program Files\Borland\Delphi7\Projects\Ferma\SimplRezFerm.pas',0,1,1,39,1,0,0
+File_4=SourceModule,'e:\program files\borland\delphi7\source\rtl\Sys\system.pas',0,1,1,1,18,0,0
+File_5=SourceModule,'e:\program files\borland\delphi7\source\rtl\Win\Windows.pas',0,1,23860,14,23880,0,0
+File_6=SourceModule,'E:\Program Files\Borland\Delphi7\Projects\Ferma\plast_rez.pas',0,1,1,45,6,0,1
+
+[Modules]
+Module0=E:\Program Files\Borland\Delphi7\Projects\Ferma\FermOptParam.pas
+Module1=E:\Program Files\Borland\Delphi7\Projects\Ferma\Ferma_M.pas
+Module2=E:\Program Files\Borland\Delphi7\Projects\Ferma\selectMetod.pas
+Module3=E:\Program Files\Borland\Delphi7\Projects\Ferma\Plast_M.pas
+Module4=E:\Program Files\Borland\Delphi7\Projects\Ferma\Main.pas
+Module5=E:\Program Files\Borland\Delphi7\Projects\Ferma\Visio.pas
+Module6=E:\Program Files\Borland\Delphi7\Projects\Ferma\Plast_FD.pas
+Module7=E:\Program Files\Borland\Delphi7\Projects\Ferma\NewCut.pas
+Module8=E:\Program Files\Borland\Delphi7\Projects\Ferma\tok_M.pas
+Module9=E:\Program Files\Borland\Delphi7\Projects\Ferma\Splash.pas
+Count=10
+EditWindowCount=1
+
+[E:\Program Files\Borland\Delphi7\Projects\Ferma\FermOptParam.pas]
+ModuleType=SourceModule
+FormState=1
+FormOnTop=0
+
+[E:\Program Files\Borland\Delphi7\Projects\Ferma\Ferma_M.pas]
+ModuleType=SourceModule
+FormState=1
+FormOnTop=0
+
+[E:\Program Files\Borland\Delphi7\Projects\Ferma\selectMetod.pas]
+ModuleType=SourceModule
+FormState=1
+FormOnTop=0
+
+[E:\Program Files\Borland\Delphi7\Projects\Ferma\Plast_M.pas]
+ModuleType=SourceModule
+FormState=1
+FormOnTop=0
+
+[E:\Program Files\Borland\Delphi7\Projects\Ferma\Main.pas]
+ModuleType=SourceModule
+FormState=1
+FormOnTop=0
+
+[E:\Program Files\Borland\Delphi7\Projects\Ferma\Visio.pas]
+ModuleType=SourceModule
+FormState=1
+FormOnTop=0
+
+[E:\Program Files\Borland\Delphi7\Projects\Ferma\Plast_FD.pas]
+ModuleType=SourceModule
+FormState=1
+FormOnTop=0
+
+[E:\Program Files\Borland\Delphi7\Projects\Ferma\NewCut.pas]
+ModuleType=SourceModule
+FormState=1
+FormOnTop=0
+
+[E:\Program Files\Borland\Delphi7\Projects\Ferma\tok_M.pas]
+ModuleType=SourceModule
+FormState=1
+FormOnTop=0
+
+[E:\Program Files\Borland\Delphi7\Projects\Ferma\Splash.pas]
+ModuleType=SourceModule
+FormState=1
+FormOnTop=0
+
+[E:\Program Files\Borland\Delphi7\Projects\Ferma\ferma7.dpr]
+FormState=0
+FormOnTop=0
+
+[E:\Documents and Settings\Alexey\Desktop\ProjectGroup1.bpg]
+FormState=0
+FormOnTop=0
+
+[EditWindow0]
+ViewCount=10
+CurrentView=3
+View0=0
+View1=1
+View2=2
+View3=3
+View4=4
+View5=5
+View6=6
+View7=7
+View8=8
+View9=9
+CodeExplorer=CodeExplorer@EditWindow0
+MessageView=MessageView@EditWindow0
+Create=1
+Visible=1
+State=0
+Left=232
+Top=115
+Width=960
+Height=867
+MaxLeft=-4
+MaxTop=104
+ClientWidth=952
+ClientHeight=833
+LeftPanelSize=140
+LeftPanelClients=CodeExplorer@EditWindow0
+LeftPanelData=000004000000000000000000000000000000000000000000000100000000000000000C000000436F64654578706C6F726572FFFFFFFF
+RightPanelSize=0
+BottomPanelSize=85
+BottomPanelClients=MessageView@EditWindow0
+BottomPanelData=000004000000000000000000000000000000000000000000000100000000000000000B0000004D65737361676556696577FFFFFFFF
+
+[View0]
+Module=E:\Program Files\Borland\Delphi7\Projects\Ferma\Main.pas
+CursorX=5
+CursorY=2390
+TopLine=2390
+LeftCol=1
+
+[View1]
+Module=E:\Program Files\Borland\Delphi7\Projects\Ferma\Splash.pas
+CursorX=25
+CursorY=41
+TopLine=22
+LeftCol=1
+
+[View2]
+Module=E:\Program Files\Borland\Delphi7\Projects\Ferma\Ferma_M.pas
+CursorX=22
+CursorY=1980
+TopLine=1965
+LeftCol=1
+
+[View3]
+Module=E:\Program Files\Borland\Delphi7\Projects\Ferma\FermOptParam.pas
+CursorX=42
+CursorY=166
+TopLine=133
+LeftCol=1
+
+[View4]
+Module=E:\Program Files\Borland\Delphi7\Projects\Ferma\selectMetod.pas
+CursorX=63
+CursorY=113
+TopLine=97
+LeftCol=1
+
+[View5]
+Module=E:\Program Files\Borland\Delphi7\Projects\Ferma\Plast_M.pas
+CursorX=8
+CursorY=866
+TopLine=857
+LeftCol=1
+
+[View6]
+Module=E:\Program Files\Borland\Delphi7\Projects\Ferma\Visio.pas
+CursorX=1
+CursorY=1164
+TopLine=1132
+LeftCol=1
+
+[View7]
+Module=E:\Program Files\Borland\Delphi7\Projects\Ferma\Plast_FD.pas
+CursorX=1
+CursorY=1607
+TopLine=1590
+LeftCol=1
+
+[View8]
+Module=E:\Program Files\Borland\Delphi7\Projects\Ferma\NewCut.pas
+CursorX=15
+CursorY=84
+TopLine=67
+LeftCol=1
+
+[View9]
+Module=E:\Program Files\Borland\Delphi7\Projects\Ferma\tok_M.pas
+CursorX=25
+CursorY=8
+TopLine=1
+LeftCol=1
+
+[Watches]
+Count=0
+
+[Breakpoints]
+Count=2
+Breakpoint0='E:\Program Files\Borland\Delphi7\Projects\Ferma\Ferma_FD.pas',872,'',0,1,'',1,0,0,'',1,'','',''
+Breakpoint1='E:\Program Files\Borland\Delphi7\Projects\Ferma\Ferma_FD.pas',875,'',0,1,'',1,0,0,'',1,'','',''
+
+[AddressBreakpoints]
+Count=0
+
+[Main Window]
+Create=1
+Visible=1
+State=2
+Left=0
+Top=0
+Width=1088
+Height=112
+MaxLeft=-1
+MaxTop=-1
+MaxWidth=1288
+MaxHeight=112
+ClientWidth=1280
+ClientHeight=78
+
+[ProjectManager]
+Create=1
+Visible=1
+State=0
+Left=421
+Top=359
+Width=438
+Height=305
+MaxLeft=-1
+MaxTop=-1
+ClientWidth=430
+ClientHeight=279
+TBDockHeight=305
+LRDockWidth=438
+Dockable=1
+
+[AlignmentPalette]
+Create=1
+Visible=0
+State=0
+Left=200
+Top=114
+Width=156
+Height=84
+MaxLeft=-1
+MaxTop=-1
+ClientWidth=150
+ClientHeight=60
+
+[PropertyInspector]
+Create=1
+Visible=1
+State=0
+Left=0
+Top=114
+Width=254
+Height=732
+MaxLeft=-1
+MaxTop=-1
+ClientWidth=246
+ClientHeight=706
+TBDockHeight=527
+LRDockWidth=190
+Dockable=1
+SplitPos=93
+ArrangeBy=Name
+SelectedItem=OnClick
+ExpandedItems=
+HiddenCategories=
+
+[ObjectTree]
+Create=1
+Visible=1
+State=0
+Left=1083
+Top=117
+Width=190
+Height=624
+MaxLeft=-1
+MaxTop=-1
+ClientWidth=182
+ClientHeight=598
+TBDockHeight=352
+LRDockWidth=190
+Dockable=1
+
+[CodeExplorer@EditWindow0]
+Create=1
+Visible=1
+State=0
+Left=0
+Top=12
+Width=140
+Height=733
+MaxLeft=-1
+MaxTop=-1
+ClientWidth=140
+ClientHeight=733
+TBDockHeight=305
+LRDockWidth=140
+Dockable=1
+
+[MessageView@EditWindow0]
+Create=1
+Visible=1
+State=0
+Left=12
+Top=0
+Width=940
+Height=85
+MaxLeft=-1
+MaxTop=-1
+ClientWidth=940
+ClientHeight=85
+TBDockHeight=85
+LRDockWidth=443
+Dockable=1
+
+[DockHosts]
+DockHostCount=0
+

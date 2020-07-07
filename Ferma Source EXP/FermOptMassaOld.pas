@@ -1,0 +1,1099 @@
+unit FermOptMassa1;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, Buttons;
+
+type
+  TFerm_opt_massa = class(TForm)
+    GroupBox1: TGroupBox;
+    Ok_Btn: TBitBtn;
+    GroupBox2: TGroupBox;
+    MinS_Label: TLabel;
+    fmi_Edt: TEdit;
+    Label4: TLabel;
+    Label5: TLabel;
+    RadioButton11: TRadioButton;
+    RadioButton12: TRadioButton;
+    maxkit_Edt: TEdit;
+    ebsi_Edt: TEdit;
+    GroupBox5: TGroupBox;
+    Label3: TLabel;
+    Label6: TLabel;
+    ComboBox1: TComboBox;
+    Edit9: TEdit;
+    Button1: TButton;
+    Button2: TButton;
+    GroupBox6: TGroupBox;
+    Label7: TLabel;
+    Edit1: TEdit;
+    GroupBox7: TGroupBox;
+    GroupBox8: TGroupBox;
+    RadioButton1: TRadioButton;
+    RadioButton2: TRadioButton;
+    RadioButton3: TRadioButton;
+    CheckBox1: TCheckBox;
+    GroupBox9: TGroupBox;
+    Label8: TLabel;
+    Edit8: TEdit;
+    Edit3: TEdit;
+    ScrollBar1: TScrollBar;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label9: TLabel;
+    Label10: TLabel;
+    ljambda_Edt: TEdit;
+    Label11: TLabel;
+    BitBtn1: TBitBtn;
+    AvtoR: TCheckBox;
+
+
+
+       procedure Edit3Change(Sender: TObject);
+    procedure ScrollBar1Change(Sender: TObject);
+
+    procedure Button1Click(Sender: TObject);
+    procedure ComboBox1Click11(Sender: TObject);
+    procedure ComboBox1Change(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
+    procedure Edit1Change(Sender: TObject);
+    procedure RadioButton3Click(Sender: TObject);
+    procedure RadioButton1Click(Sender: TObject);
+    procedure RadioButton2Click(Sender: TObject);
+    procedure CheckBox1Click(Sender: TObject);
+    procedure Ok_BtnClick(Sender: TObject);
+    procedure BitBtn1Click(Sender: TObject);
+    procedure AvtoRClick(Sender: TObject);
+    procedure AvtoRClick1(Sender: TObject);
+    procedure Edit8Change(Sender: TObject);
+
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+
+    ferma5_kol_uzlov_m1 :array [1..10] of integer; // FERMA 5
+    ferma_5_dannie_o_uzlax1:array [1..10,1..5] of integer; // данные о каждом узле -  параметры оптимизации
+
+    nyz1:integer;
+//    Ak_flag :boolean;
+//    Ak_num, Ak_Rad  :integer;
+  end;
+
+var
+  Ferm_opt_massa: TFerm_opt_massa;
+  // Начало // Каченовская Светлана
+  Edit8_Wrong: integer;
+  // Конец // Каченовская Светлана
+
+implementation
+
+uses Main, Fix_node, ForcNode, SimplRezFerm,
+     FermOptResults, Ferma_FD, FermaForceNode, CoordNode, FermaPivotTol,
+     Plast_FD, TOK_FD, selectMetod, RezVC1, FermOptNode_Uzel, Ferma_M,
+  fermoptnode;
+
+{$R *.dfm}
+
+
+
+
+
+
+
+procedure TFerm_opt_massa.Edit3Change(Sender: TObject);
+var
+j,i,x,y:integer;
+begin
+x:=strtoint(combobox1.text);  // узел
+y:=strtoint(edit3.text); // радиус поиска
+ { with Ferma_M.Ferma_Form.PaintBox.Canvas do
+                         begin
+                              pen.Mode   :=pmNotXor;
+                              pen.Width  :=2;
+                              pen.Color  :=clBlue;
+                              brush.Color:=clWhite;
+                              pen.Mode   :=pmNotXor;
+                             // Ellipse(x,y/2,+5,+5);
+Ellipse(round(Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).Ferm.corn[x,1]-round(y/2)), round(Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).Ferm.corn[x,2]+y/2),round(Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).Ferm.corn[x,1]+y/2),round(Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).Ferm.corn[x,2]-y/2));
+end;
+  }
+
+if y>200 then y:=200;
+Ferm_opt_node.Ak_flag:=true;
+Ferm_opt_node.Ak_num:=x;
+Ferm_opt_node.Ak_Rad:=y;
+Fermoptmassa.Ferm_opt_massa.ScrollBar1.Position:=y;
+
+  j:=0;// поиск номера
+  for i:=1 to strtoint(edit9.Text) do
+  begin
+   if ferma5_kol_uzlov_m1[i]=strtoint(ComboBox1.Text) then
+    begin
+    j:=i;
+    end;
+  end;
+  // теперь j - номер нужного элемента
+
+// ну блин пусть работает если тока окно видно- а то фигня получается при многоузловой оптимизации
+if Fermoptmassa.Ferm_opt_massa.Visible=true then
+begin
+ferma_5_dannie_o_uzlax1[j,2]:=strtoint(edit3.Text); //радиус области поиска
+Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).RePaint;
+end;
+
+end;
+
+
+
+procedure TFerm_opt_massa.ScrollBar1Change(Sender: TObject);
+var
+Scale:integer;
+ label exx1;
+begin
+ if edit9.text='0' then   // если нет узлов то нельзя ничего рисовать
+ goto exx1;
+
+Scale:=Fermoptmassa.Ferm_opt_massa.ScrollBar1.Position;
+edit3.Text:=IntToStr(scale);
+Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).RePaint;
+exx1:
+end;
+
+
+
+
+//Начало// Епишкин В.C. - Новая процедура, позволяет вводить сразу несколько
+// узлов, разделенных точкой с запятой.
+procedure TFerm_opt_massa.Button1Click(Sender: TObject);
+var
+  n_uzla:integer;
+
+  ff: System.Text;
+  filename:string;
+  i,j:integer;
+  NST:integer;                                       {ЧИCЛO CTEPЖHEЙ ФEPMЫ}
+  NYZ:integer;                                       {ЧИCЛO УЗЛOB}
+
+  j1,i1:integer;
+  s : TStrings; //список добавляемых узлов
+  k : integer;  //счетчик добавления узлов
+label m303; // метка выхода из процедуры
+begin
+  Form4.Edit1.Text:='';   //очищаем форму ввода узлов для оптимизации
+  Form4.Left :=ferm_opt_massa.left+40;
+  Form4.top :=ferm_opt_massa.top+190;
+
+  if Form4.ShowModal<>mrOk then goto m303; // если не нажат ОК, то - выходим
+
+   s := TStringlist.create; //создаем список
+   s.Delimiter := ';'; //указывает на разделитель между строками
+   s.DelimitedText := form4.Edit1.text ; //заполняем текстом с разделителем
+
+ // *************
+ // считаем данные из файлика- тока до NYZ
+    FileName:=Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).FileName;
+    AssignFile(ff,FileName);
+    reset(ff);
+    readln(ff,nst);
+    readln(ff,nyz);
+    CloseFile(ff);
+// закончили
+
+  for k:=0 to s.Count-1 do // вводим узлы
+  begin
+    try
+      i1:=strtoint(s[k]); // новый узел - проверим // если введено не число - в исключение
+    except // если очередной узел не число
+      Main_Form.StatusBar1.Panels[2].Text :='Введено не число'; // сообщение
+      continue; // переход к следующему числу
+    end;
+    i:=0; // признак ошибки
+    j1:=strtoint(Ferm_opt_massa.Edit9.Text); // всего сколько узлов ( минимум 1)
+
+    if j1>4 then // условие // не более 5 узлов
+      begin
+      Main_Form.StatusBar1.Panels[2].Text :='Узлов нельзя больше 5 ! ';
+      continue;
+    end;
+
+    if (i1 > nyz) or (i1 <= 0) then //условие на узлы
+      begin
+        Main_Form.StatusBar1.Panels[2].Text :='Неверный номер узла';
+        continue;
+      end;
+
+   for j:=1 to j1 do
+    begin
+      if ferma5_kol_uzlov_m1[j]=i1 then // ищем такой в массиве
+      begin
+        Main_Form.StatusBar1.Panels[2].Text :='Узел уже есть в списке ! ';
+        i:=1; break;
+      end;
+    end;
+    if i=1 then continue;
+
+    ///********************
+    // проверка  и разрешение оптимизации и вывод параметров
+    begin
+    // Fermoptmassa.Ferm_opt_massa.modalresult:=mrOk;
+      Main_Form.StatusBar1.Panels[2].Text :=' ';
+      Groupbox6.Visible:=true;
+    end;
+    // добавление  данных
+    ferma5_kol_uzlov_m1[j1+1]:=i1;
+    Ferm_opt_massa.Edit9.Text:=inttostr(j1+1);
+    Ferm_opt_massa.ComboBox1Click11(sender);// заполнение листbох
+    // заполнение свойств данного узла
+    ferma_5_dannie_o_uzlax1[j1+1,1]:=strtoint(edit1.Text); // число дроблений шага
+    ferma_5_dannie_o_uzlax1[j1+1,2]:=strtoint(edit3.Text); //радиус области поиска
+
+    if radiobutton1.Checked then
+      ferma_5_dannie_o_uzlax1[j1+1,3]:=1;// изменение координат (по Х)
+    if radiobutton2.Checked  then
+      ferma_5_dannie_o_uzlax1[j1+1,3]:=2;// изменение координат (по Y)
+    if radiobutton3.Checked  then
+      ferma_5_dannie_o_uzlax1[j1+1,3]:=3;// изменение координат (по ХY)
+
+    if Fermoptmassa.Ferm_opt_massa.CheckBox1.Checked=true then // вывод промежуточных данных
+      ferma_5_dannie_o_uzlax1[j1+1,4]:=1
+    else
+      ferma_5_dannie_o_uzlax1[j1+1,4]:=0;
+
+    if Fermoptmassa.Ferm_opt_massa.AvtoR.Checked=true then // вывод промежуточных данных
+      ferma_5_dannie_o_uzlax1[j1+1,5]:=1
+    else
+      ferma_5_dannie_o_uzlax1[j1+1,5]:=0;
+
+    ComboBox1.itemindex:=j1; // выбираем последний
+    Ferm_opt_node.Ak_flag:=true; // флаг прорисовки кружка для определения области положения узла
+    if  AvtoR.Checked=true then Ferm_opt_massa.AvtoRClick1(Sender)  ;
+    Ferm_opt_massa.ComboBox1Change(Sender);// вывод кружка и номера узла
+
+  end;
+    s.Destroy(); // освобождаем память, удаляем список
+    m303:
+    
+end;
+//Конец// Епишкин В.С.
+
+
+
+
+{procedure TFerm_opt_massa.Button1Click(Sender: TObject);
+var
+n_uzla:integer;
+// блин тут это все только для того чтоб выловить из  программы NYZ - чета я туплю сегодня и больше никак не оплучается
+ ff: System.Text;
+ filename:string;
+ i,j:integer;
+ NST:integer;                                       //ЧИCЛO CTEPЖHEЙ ФEPMЫ
+ NYZ:integer;                                       //ЧИCЛO УЗЛOB
+// канец переменных
+
+j1,i1:integer;
+ label m303;
+begin
+Form4.Edit1.Text:='';
+ Form4.Left :=ferm_opt_massa.left+40;
+ Form4.top :=ferm_opt_massa.top+190;
+
+  if Form4.ShowModal<>mrOk then
+  begin
+  goto m303;
+  end;
+  // если нажат ОК
+
+
+
+j1:=strtoint(Ferm_opt_massa.Edit9.Text); // всего сколько узлов ( минимум 1)
+
+ if j1>4 then
+ begin
+ Main_Form.StatusBar1.Panels[2].Text :='Узлов нельзя больше 5 ! ';
+ goto m303;
+ end;
+
+ i1:=strtoint(form4.Edit1.text); // новый узел - проверим
+
+// *************
+ // считаем данные из файлика- тока до NYZ
+FileName:=Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).FileName;
+
+    AssignFile(ff,FileName);
+     reset(ff);
+     readln(ff,nst);
+     readln(ff,nyz);
+     CloseFile(ff);
+// закончили
+
+i:=0; // priznak o6ibki
+if form4.edit1.text='' then form4.edit1.text:='0';
+
+if i1 <= 0 then
+ begin
+ form4.edit1.text:='1';
+ i:=1;// флаг ошибки
+ Main_Form.StatusBar1.Panels[2].Text :='Неверный номер узла';
+ end;
+
+if i1 > nyz then
+ begin
+ Main_Form.StatusBar1.Panels[2].Text :='Неверный номер узла';
+
+ i:=1;
+ end;
+
+ if i=0 then Main_Form.StatusBar1.Panels[2].Text :=' ' //если не было ошибки
+ else
+ goto m303;
+// **************
+
+
+
+for i:=1 to j1 do
+begin
+ if ferma5_kol_uzlov_m1[i]=i1 then // ищем такой в массиве
+  begin
+  Main_Form.StatusBar1.Panels[2].Text :='Узел уже есть в списке ! ';
+  goto m303;
+  end;
+
+end;
+///********************
+
+
+
+// проверка  и разрешение оптимизации и вывод параметров
+ begin
+// Fermoptmassa.Ferm_opt_massa.modalresult:=mrOk;
+ Main_Form.StatusBar1.Panels[2].Text :=' ';
+ Groupbox6.Visible:=true;
+
+
+ end;
+
+
+
+// собсна само добавление  данных
+  ferma5_kol_uzlov_m1[j1+1]:=i1;
+  Ferm_opt_massa.Edit9.Text:=inttostr(j1+1);
+  Ferm_opt_massa.ComboBox1Click11(sender);// заполнение листбох
+// заполнение свойств данного узла
+  ferma_5_dannie_o_uzlax1[j1+1,1]:=strtoint(edit1.Text); // число дроблений шага
+  ferma_5_dannie_o_uzlax1[j1+1,2]:=strtoint(edit3.Text); //радиус области поиска
+
+  if radiobutton1.Checked then
+  ferma_5_dannie_o_uzlax1[j1+1,3]:=1;// изменение координат (по Х)
+  if radiobutton2.Checked  then
+  ferma_5_dannie_o_uzlax1[j1+1,3]:=2;// изменение координат (по Y)
+  if radiobutton3.Checked  then
+  ferma_5_dannie_o_uzlax1[j1+1,3]:=3;// изменение координат (по ХY)
+
+
+  if Fermoptmassa.Ferm_opt_massa.CheckBox1.Checked=true then // вывод промежуточных данных
+  ferma_5_dannie_o_uzlax1[j1+1,4]:=1
+  else
+  ferma_5_dannie_o_uzlax1[j1+1,4]:=0;
+
+  if Fermoptmassa.Ferm_opt_massa.AvtoR.Checked=true then // вывод промежуточных данных
+  ferma_5_dannie_o_uzlax1[j1+1,5]:=1
+  else
+  ferma_5_dannie_o_uzlax1[j1+1,5]:=0;
+
+ComboBox1.itemindex:=j1; // выбираем последний
+
+
+
+  Ferm_opt_node.Ak_flag:=true; // флаг прорисовки кружка для определения области положения узла
+
+  if  AvtoR.Checked=true then Ferm_opt_massa.AvtoRClick1(Sender)  ;
+
+  Ferm_opt_massa.ComboBox1Change(Sender);// вывод кружка и номера узла
+
+
+
+
+m303:
+end; }
+
+procedure TFerm_opt_massa.ComboBox1Click11(Sender: TObject);
+var
+j,i:integer;
+begin
+j:=strtoint(Ferm_opt_massa.Edit9.Text); // всего сколько узлов ( минимум 1)
+ Ferm_opt_massa.ComboBox1.Items.Clear;
+
+   for i:=1 to  j  do
+//   Ferm_opt_massa.ComboBox1.Items.Add(IntToStr(i));   // запихиваем при нажатии на листбох туда цифирки-  узлы
+   Ferm_opt_massa.ComboBox1.Items.Add(IntToStr(ferma5_kol_uzlov_m1[i]));   // запихиваем при нажатии на листбох туда цифирки-  узлы
+
+
+Ferm_opt_massa.ComboBox1.itemindex:=0; // выбираем пеpвый
+
+
+ ferma_FD_form.showD(f);
+ Main_Form.ActiveMDIChild.RePaint;
+end;
+
+
+
+
+procedure TFerm_opt_massa.ComboBox1Change(Sender: TObject);
+var
+i,j:integer;
+label exx;
+begin
+// при выборе другого элемента грузятся ЕГО свойства заместо текущих
+
+  j:=0;// поиск номера
+if edit9.Text='0' then goto exx;
+
+  for i:=1 to strtoint(Edit9.Text) do
+  begin
+   if ferma5_kol_uzlov_m1[i]=strtoint(ComboBox1.Text) then
+    begin
+    j:=i;
+    end;
+  end;
+  // теперь j - номер нужного элемента
+
+
+// запихиваем данные
+ edit1.text:= inttostr( fermoptmassa.Ferm_opt_massa.ferma_5_dannie_o_uzlax1[j,1]); //максимальное количество шагов .
+  edit3.text:=inttostr( fermoptmassa.Ferm_opt_massa.ferma_5_dannie_o_uzlax1[j,2]); //радиус области поиска
+
+
+  if fermoptmassa.Ferm_opt_massa.ferma_5_dannie_o_uzlax1[j,3]=1   then
+    fermoptmassa.Ferm_opt_massa.radiobutton1.Checked:=true;
+  if fermoptmassa.Ferm_opt_massa.ferma_5_dannie_o_uzlax1[j,3]=2   then
+    fermoptmassa.Ferm_opt_massa.radiobutton2.Checked:=true;
+  if fermoptmassa.Ferm_opt_massa.ferma_5_dannie_o_uzlax1[j,3]=3   then
+    fermoptmassa.Ferm_opt_massa.radiobutton3.Checked:=true;
+
+
+  if   fermoptmassa.Ferm_opt_massa.ferma_5_dannie_o_uzlax1[j,4]=1 then // вывод промежуточных данных
+  fermoptmassa.Ferm_opt_massa.CheckBox1.Checked:=true
+  else
+  fermoptmassa.Ferm_opt_massa.CheckBox1.Checked:=false;
+
+ 
+
+  if   ferma_5_dannie_o_uzlax1[j,5]=1 then  // вкл авторадиус
+  Avtor.checked:=true
+  else
+  Avtor.checked:=false;
+
+  //*************************************** zakoncili изменение дданных для нового узла
+// перерисуем кружок
+Edit3Change(Sender);
+// номерок проставим в GroupBox
+groupbox6.caption:='Узел № '+ (ComboBox1.Text) ;
+
+
+
+exx:
+end;
+
+
+
+
+
+
+
+procedure TFerm_opt_massa.Button2Click(Sender: TObject);
+
+var
+n_uzla:integer;
+
+i,j,j1,i1:integer;
+ label m303;
+begin
+
+  if Form4.ShowModal<>mrOk then
+  begin
+  goto m303;
+  end;
+  // если нажат ОК
+  
+    j1:=strtoint(Ferm_opt_massa.Edit9.Text); // всего сколько узлов ( минимум 1)
+
+
+ if j1<=0 then // проверка - если нет узлов
+ begin
+  Main_Form.StatusBar1.Panels[2].Text :='Нет ни одного узла ! ';
+  goto m303;
+ end;
+
+ if j1=1 then // проверка - если удаляем ПОСЛЕДНИЙ УЗЕЛ
+ begin
+ Fermoptmassa.Ferm_opt_massa.Ok_Btn.modalresult:=mrCancel;
+  Ferm_opt_node.Ak_flag:=false  ; // уберем кружок
+   Main_Form.ActiveMDIChild.RePaint;
+
+ Main_Form.StatusBar1.Panels[2].Text :='Удалены все узлы ! ';
+ Groupbox6.Visible:=false;
+
+
+
+
+
+
+ end;
+
+ i1:=strtoint(form4.Edit1.text); // новый узел - проверим
+
+// **************
+j:=1; // признак ошибки
+for i:=1 to j1 do
+begin
+ if ferma5_kol_uzlov_m1[i]=i1 then // ищем такой в массиве
+  begin
+  j:=0; // нашли - сняли ошибку
+  n_uzla:=i; // запомним номер в массиве
+  end;
+
+end;
+if j=1 then
+ begin
+ Main_Form.StatusBar1.Panels[2].Text :='Узел не найден среди введенных ! ';
+
+ goto m303;
+ end;
+
+
+// удаление из массива оптимизируемых узлов указанного узла
+for i:=n_uzla to j1-1 do
+  ferma5_kol_uzlov_m1[i]:=  ferma5_kol_uzlov_m1[i+1];
+
+// все заменили  - сдвинув массив влево на одну позицию с нужного места
+  Ferm_opt_massa.Edit9.Text:=inttostr(j1-1);
+
+
+ // обработка массива с параметрами оптимизации
+ // удаление из массива оптимизируемых узлов указанного узла
+for i:=n_uzla to j1-1 do
+ begin
+  ferma_5_dannie_o_uzlax1[i,1]:=ferma_5_dannie_o_uzlax1[i+1,1];
+  ferma_5_dannie_o_uzlax1[i,2]:=ferma_5_dannie_o_uzlax1[i+1,2];
+  ferma_5_dannie_o_uzlax1[i,3]:=ferma_5_dannie_o_uzlax1[i+1,3];
+  ferma_5_dannie_o_uzlax1[i,4]:=ferma_5_dannie_o_uzlax1[i+1,4];
+ end;
+
+   Ferm_opt_massa.ComboBox1Click11(sender);// заполнение листбох
+   Ferm_opt_massa.ComboBox1Change(Sender);// вывод кружка и номера узла
+
+m303:
+
+
+end;
+
+procedure TFerm_opt_massa.Edit1Change(Sender: TObject);
+var
+i,j:integer;
+begin
+
+  j:=0;// поиск номера
+  for i:=1 to strtoint(edit9.Text) do
+  begin
+   if ferma5_kol_uzlov_m1[i]=strtoint(ComboBox1.Text) then
+    begin
+    j:=i;
+    end;
+  end;
+  // теперь j - номер нужного элемента
+
+
+// заполнение свойств данного узла
+
+// ну блин пусть работает если тока окно видно- а то фигня получается при многоузловой оптимизации
+if Fermoptmassa.Ferm_opt_massa.Visible=true then
+  ferma_5_dannie_o_uzlax1[j,1]:=strtoint(edit1.Text); // число дроблений шага
+
+
+
+
+
+end;
+
+procedure TFerm_opt_massa.RadioButton3Click(Sender: TObject);
+var
+i,j:integer;
+begin
+  j:=0;// поиск номера
+  for i:=1 to strtoint(edit9.Text) do
+  begin
+   if ferma5_kol_uzlov_m1[i]=strtoint(ComboBox1.Text) then
+    begin
+    j:=i;
+    end;
+  end;
+  // теперь j - номер нужного элемента
+
+if Fermoptmassa.Ferm_opt_massa.Visible=true then
+          Fermoptmassa.Ferm_opt_massa.ferma_5_dannie_o_uzlax1[j,3]:=3; //радиус области поиска
+
+
+end;
+
+procedure TFerm_opt_massa.RadioButton1Click(Sender: TObject);
+var
+i,j:integer;
+begin
+  j:=0;// поиск номера
+  for i:=1 to strtoint(edit9.Text) do
+  begin
+   if ferma5_kol_uzlov_m1[i]=strtoint(ComboBox1.Text) then
+    begin
+    j:=i;
+    end;
+  end;
+  // теперь j - номер нужного элемента
+if Fermoptmassa.Ferm_opt_massa.Visible=true then
+            Fermoptmassa.Ferm_opt_massa.ferma_5_dannie_o_uzlax1[j,3]:=1; //радиус области поиска
+
+end;
+
+procedure TFerm_opt_massa.RadioButton2Click(Sender: TObject);
+var
+i,j:integer;
+begin
+  j:=0;// поиск номера
+  for i:=1 to strtoint(edit9.Text) do
+  begin
+   if ferma5_kol_uzlov_m1[i]=strtoint(ComboBox1.Text) then
+    begin
+    j:=i;
+    end;
+  end;
+  // теперь j - номер нужного элемента
+
+if Fermoptmassa.Ferm_opt_massa.Visible=true then
+ Fermoptmassa.Ferm_opt_massa.ferma_5_dannie_o_uzlax1[j,3]:=2; //радиус области поиска
+end;
+
+procedure TFerm_opt_massa.CheckBox1Click(Sender: TObject);
+var
+i,j:integer;
+begin
+  j:=0;// поиск номера
+  for i:=1 to strtoint(edit9.Text) do
+  begin
+   if ferma5_kol_uzlov_m1[i]=strtoint(ComboBox1.Text) then
+    begin
+    j:=i;
+    end;
+  end;
+  // теперь j - номер нужного элемента
+
+ // ну блин пусть работает если тока окно видно- а то фигня получается при многоузловой оптимизации
+ if Fermoptmassa.Ferm_opt_massa.Visible=true then
+
+   if Fermoptmassa.Ferm_opt_massa.CheckBox1.Checked=true then // вывод промежуточных данных
+    ferma_5_dannie_o_uzlax1[j,4]:=1
+   else
+    ferma_5_dannie_o_uzlax1[j,4]:=0;
+
+end;
+
+procedure TFerm_opt_massa.Ok_BtnClick(Sender: TObject);
+var
+i,j:integer;
+label exxx;
+begin
+
+if  Fermoptmassa.Ferm_opt_massa.edit9.text=inttostr(0) then
+ begin
+  Main_Form.StatusBar1.Panels[2].Text :='Не введен ни один узел ! ';
+  Fermoptmassa.Ferm_opt_massa.modalresult:=mrCancel;
+  goto exxx;
+ end
+ else
+  Fermoptmassa.Ferm_opt_massa.modalresult:=mrOk;
+
+
+  j:=0;// поиск номера
+  for i:=1 to strtoint(edit9.Text) do
+  begin
+   if ferma5_kol_uzlov_m1[i]=strtoint(ComboBox1.Text) then
+    begin
+    j:=i;
+    end;
+  end;
+  // теперь j - номер нужного элемента
+
+
+  ferma_5_dannie_o_uzlax1[j,1]:=strtoint(edit1.Text); // число дроблений шага
+  ferma_5_dannie_o_uzlax1[j,2]:=strtoint(edit3.Text); //радиус области поиска
+
+  if radiobutton1.Checked   then
+  ferma_5_dannie_o_uzlax1[j,3]:=1;// изменение координат (по Х)
+  if radiobutton2.Checked then
+  ferma_5_dannie_o_uzlax1[j,3]:=2;// изменение координат (по Y)
+  if radiobutton3.Checked  then
+  ferma_5_dannie_o_uzlax1[j,3]:=3;// изменение координат (по ХY)
+
+
+  if fermoptmassa.Ferm_opt_massa.CheckBox1.Checked=true  then // вывод промежуточных данных
+  ferma_5_dannie_o_uzlax1[j,4]:=1
+  else
+  ferma_5_dannie_o_uzlax1[j,4]:=0;
+
+  
+exxx:
+end;
+
+
+
+
+
+
+
+
+procedure TFerm_opt_massa.BitBtn1Click(Sender: TObject);
+begin
+Ferm_opt_massa.Close;
+end;
+
+procedure TFerm_opt_massa.AvtoRClick(Sender: TObject);
+var
+ NST:integer;                                       {ЧИCЛO CTEPЖHEЙ ФEPMЫ}
+ NYZ:integer;                                       {ЧИCЛO УЗЛOB}
+rmin:real; //awtoradius
+i1,r1,r2,r3:integer;//awtoradius
+a,b,c,sina,cosa:real;//awtoradius
+i,j:integer;
+ // канец переменных
+
+begin
+  j:=0;// поиск номера
+  for i:=1 to strtoint(edit9.Text) do
+  begin
+   if ferma5_kol_uzlov_m1[i]=strtoint(ComboBox1.Text) then
+    begin
+    j:=i;
+    
+    end;
+  end;
+  // теперь j - номер нужного элемента
+
+//*************************************
+if  AvtoR.Checked=false then
+ begin
+ edit3.enabled:=true;
+ scrollbar1.enabled:=true;
+ ferma_5_dannie_o_uzlax1[j,5]:=0;
+ end
+else
+ begin
+ Ferm_opt_massa.AvtoRClick1(sender);
+ edit3.enabled:=false;
+ scrollbar1.enabled:=false;
+ ferma_5_dannie_o_uzlax1[j,5]:=1;
+ end;
+end;
+
+
+procedure TFerm_opt_massa.AvtoRClick1(Sender: TObject);
+var
+ NST:integer;                                       {ЧИCЛO CTEPЖHEЙ ФEPMЫ}
+ NYZ:integer;                                       {ЧИCЛO УЗЛOB}
+rmin:real; //awtoradius
+i1,r1,r2,r3:integer;//awtoradius
+a,b,c,sina,cosa:real;//awtoradius
+ // канец переменных
+
+begin
+
+
+// *******************************FERMA 6.1 **************
+// Новый инструмент - АвтоРадиус
+// автоматически производится расчет максимально допустимой величины "кружка" - путем анализа
+// конструкции и вычисления миниимального расстояния от заданного узла до ближайшего узла/стержня.
+// ******************************************************
+// исходные данные - кол-во узлов, кол-во стержней, координаты всех узлов, номер оптимизируемого узла, стержни( пары узов их составляющих)
+// i1- номер оптимизируемого узла
+// выход- найденный радиус. rmin
+//
+//
+{
+  AssignFile(dd,ff1);.. *.frm
+        rewrite(dd);
+
+        READln (d1,NST); // число стрержней фермы
+        READln (d1,NYZ); // число узлов
+        READln (d1,NY);
+        READln (d1,E);
+        READln (d1,NSN);
+        READln (d1,SD);
+//      writeln(dd,'Массив топологий стержней');
+        for i:=1 to nst do
+          begin
+          readln(d1,ITOP[i,1]);
+          readln(d1,ITOP[i,2]);
+         end;
+
+//      writeln(dd,'Массив координат узлов');
+        for i:=1 to nyz do
+          begin
+          readln(d1,cor[i,1]);
+          readln(d1,cor[i,2]);
+         end;
+}
+
+// проверка всех пар узлов.
+ i1:=strtoint(ComboBox1.text);
+rmin:= abs (sqrt (sqr( Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).Ferm.corn[1,1]-Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).Ferm.corn[i1,1]) +  sqr(Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).Ferm.corn[1,2]-Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).Ferm.corn[i1,2]) )) ; // расстояние ( по модулю ) от нашего узла до 1го узла
+ if  rmin=0 then // если 1ый узел и есть то берем 2 - от балды
+  rmin:= abs (sqrt (sqr( Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).Ferm.corn[2,1]-Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).Ferm.corn[i1,1]) +  sqr(Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).Ferm.corn[2,2]-Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).Ferm.corn[i1,2]) )) ; // расстояние ( по модулю ) от нашего узла до 1го узла
+
+//rmin:= abs (sqrt (sqr( cor[1,1]-cor[i1,1]) +  sqr(cor[1,2]-cor[i1,2]) )) ; // расстояние ( по модулю ) от нашего узла до 1го узла
+for r1:=1 to Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).Ferm.nyz1 do
+
+ begin
+ if r1<>i1 then   // если это наш же узел то его не учитываем
+ if abs (sqrt (sqr(Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).Ferm.corn[r1,1]-Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).Ferm.corn[i1,1]) +  sqr(Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).Ferm.corn[r1,2]-Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).Ferm.corn[i1,2]) )) < rmin then // если расстояние меньше чем наш рмин то запомниаем его
+  rmin:=abs (sqrt (sqr(Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).Ferm.corn[r1,1]-Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).Ferm.corn[i1,1]) +  sqr(Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).Ferm.corn[r1,2]-Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).Ferm.corn[i1,2]) ));
+ end;
+
+//поиск среди узла и всех стержней ( рассматриваеm реугольники)
+for  r3:=1  to Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).Ferm.nst1 do
+
+ begin
+
+  r1:=Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).Ferm.ITOPn[r3,1];
+  r2:=Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).Ferm.ITOPn[r3,2];
+
+  a:=abs (sqrt (sqr(Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).Ferm.corn[r2,1]-  Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).Ferm.corn[r1,1]) +  sqr(Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).Ferm.corn[r2,2]-  Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).Ferm.corn[r1,2]) )); // сторона напротив угла
+
+  b:=abs (sqrt (sqr(Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).Ferm.corn[i1,1]-  Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).Ferm.corn[r1,1]) +  sqr(Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).Ferm.corn[i1,2]-  Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).Ferm.corn[r1,2]) ));
+
+  c:=abs (sqrt (sqr(Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).Ferm.corn[i1,1]-  Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).Ferm.corn[r2,1]) +  sqr(Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).Ferm.corn[i1,2]-  Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).Ferm.corn[r2,2]) ));
+
+ if (a<>0) and (b<>0) and (c<>0) then
+ begin
+
+  // a**2=b**2+c**2 - 2*b*c*cos
+
+  cosa:=( sqr(b)+sqr(c)-sqr(a) )/(2*b*c)  ;
+  sina:=sqrt( 1- sqr(cosa) );
+
+  // sin/a=sin/b=sin/c  ==> sinB=sinA*b/a
+
+  // если угол тупой то искомая величина - высота
+  if cosa <=0 then
+     if      c*(sina*b/a) < rmin then      rmin:=c*(sina*b/a) // нашли ответ - если угол был тупой  . Но заменяем если только это значение меньше чем у нас запомнено.
+//     rmin:=a*(sina*b/a) // нашли ответ - если угол был тупой
+  else // иначе если острыйф смотрим
+   begin
+   // если хоть один из двух оставшихся углов - тупой - то ничего не делаем.  иначе опять таки высота
+   if  not ( ( (( sqr(c)+sqr(a)-sqr(b) )/(2*a*c ))<0)  or (   (( sqr(a)+sqr(b)-sqr(c) )/(2*a*b) )<0 ))  then // хоть один угол был тупой - ребро
+//    rmin:=c*(sina*b/a); // нашли ответ - если оба острые то высота
+      if c*(sina*b/a)< rmin then  rmin:=c*(sina*b/a); // нашли ответ - если оба острые то высота
+
+   end;
+
+
+  end;
+ end;
+
+
+ edit3.Text:=inttostr(round(rmin-0.51));
+
+
+
+
+end;
+
+
+
+
+
+procedure TFerm_opt_massa.Edit8Change(Sender: TObject);
+begin
+  // Начало // Каченовская Светлана
+
+try
+if strtoint(Edit8.text)<1 then
+ begin
+    Main_Form.StatusBar1.Panels[2].Text :='Неверное число итераций по узлам';
+    Edit8_Wrong :=1; Edit8.text:='4';
+  end
+else
+  if Edit8_Wrong <> 1 then
+    Main_Form.StatusBar1.Panels[2].Text :=''
+  else
+    Edit8_Wrong := 0;
+except
+    Main_Form.StatusBar1.Panels[2].Text :='Неверное число итераций по узлам';
+    Edit8_Wrong :=1; Edit8.text:='4'; 
+end;
+
+
+// Конец // Каченовская Светлана
+end;
+
+end.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// СТАРЫЕ ФУНКЦИИ
+{
+procedure TFerm_opt_massa.Edit3Change(Sender: TObject);
+var
+j,i,x,y:integer;
+n_uzla:integer;
+// блин тут это все только для того чтоб выловить из  программы NYZ - чета я туплю сегодня и больше никак не оплучается
+ ff: System.Text;
+ filename:string;
+
+ NST:integer;
+ NYZ:integer;
+// канец переменных
+
+{
+j1,i1:integer;
+ label ex;
+begin
+x:=strtoint(edit1.text);  // узел
+y:=strtoint(edit3.text); // радиус поиска
+
+
+FileName:=Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).FileName;
+
+    AssignFile(ff,FileName);
+     reset(ff);
+     readln(ff,nst);
+     readln(ff,nyz); // колво узлов
+     CloseFile(ff);
+// закончили
+
+if (x<0) or (x >nyz)then
+begin
+FermOptNode.Ferm_opt_node.Ak_flag:=false; // флаг прорисовки кружка для определения области положения узла
+  goto ex;
+  end;
+
+
+if y>200 then y:=200;
+if y<0 then y:=0;
+
+ScrollBar1.Position:=y;
+FermOptNode.Ferm_opt_node.Ak_flag:=true; // флаг прорисовки кружка для определения области положения узла
+FermOptNode.Ferm_opt_node.Ak_num:=x; // номер узла
+FermOptNode.Ferm_opt_node.Ak_Rad:=y; // радиус
+{
+Ak_flag:=true;
+Ak_num:=x;
+Ak_Rad:=y;
+
+FermOptNode.Ferm_opt_node.ScrollBar1.Position:=y;
+
+  j:=0;// поиск номера
+  for i:=1 to strtoint(edit9.Text) do
+  begin
+   if ferma5_kol_uzlov_m[i]=strtoint(ComboBox1.Text) then
+    begin
+    j:=i;
+    end;
+  end;
+  // теперь j - номер нужного элемента
+
+
+ferma_5_dannie_o_uzlax[j,2]:=strtoint(edit3.Text); //радиус области поиска}
+{
+Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).RePaint;
+ Main_Form.ActiveMDIChild.RePaint;
+
+
+ex:
+end;
+
+procedure TFerm_opt_massa.Edit1Change(Sender: TObject);
+begin
+Edit3Change(sender);
+end;
+
+
+
+
+
+
+procedure TFerm_opt_massa.ScrollBar1Change(Sender: TObject);
+var
+Scale:integer;
+// label exx1;
+begin
+// if edit9.text='0' then   // если нет узлов то нельзя ничего рисовать
+// goto exx1;
+
+Scale:=ScrollBar1.Position;
+edit3.Text:=IntToStr(scale);
+Ferma_M.TFerma_Form(Main_Form.ActiveMDIChild).RePaint;
+
+    end;
+
+}
+
+
+
+
+

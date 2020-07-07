@@ -1,0 +1,166 @@
+unit Ferm_Dat;
+
+interface
+
+const
+  Plast_max_zak=12;              // Максимальное количество закреплений
+  Plast_max_for=9;              // Максимальное количество сил
+  tok_max_zak=9;                // Максимальное количество закреплений
+  tok_max_for=9;              // Максимальное количество сил
+
+type
+  Phi_Table = record
+        Material : string[25];
+        Lambda : integer;
+        Phi : single;
+  end;
+//  Phi_Table_File = file of Phi_Table;
+
+  TFerm = class
+    nst1,                    // количество стержней
+    nyz1,                    // количество узлов
+    ny1,                     // количество закрепленных узлов
+    nsn1:integer;            // количество нагружений
+    e1,                      // модуль упругости
+    sd1,pltn:extended;            // допускаемое напряжение и плотность
+    s_lin,s_for:string;      // размерности
+    iTopN:array[1..15,1..2] of integer; // Топология
+    msn:array[1..9,1..2] of integer;    // Закрепления
+    corn:array[1..9,1..2] of extended;    // Координаты
+    Fn:array[1..15] of extended;          // Начальная площадь сечения
+    Pn:array[1..18,1..3] of extended;     // Нагрузки
+    region_x,region_y:extended;         // Размер области
+    Procedure Assign(f:TFerm);
+  end;
+
+  TPlast = class
+    dop1,ton1,pltn:extended;            // Доп. напряжение и нач. толщина и плотность
+    kz1,kl1:integer;             // Число закреплений и сил(а не случаев нагружения)
+                                 // Q: случай нагружния всегда один ?!!!
+    kx1,ky1:integer;             // Количество узлов по X и Y
+    e1:array[1..2] of extended;    // Модуль упругости и коэффициент Пуассона
+    xm1,ym1:array[1..15] of extended; // Координаты узлов
+    zak1,zak2,zak3:array[1..plast_max_zak] of integer; // Закрепления (номер узла, X и Y)
+    nomm,os:array[1..plast_max_for] of integer; // Нагрузки (номер узла, признак нагружения(по X - 11, по Y - 22, по X и Y - 33), по X, по y)
+    nom11,nom22:array[1..plast_max_for] of extended;
+    s_lin,s_for:string;      // размерности
+    Procedure Assign(p:TPlast);
+  end;
+
+  Ttok = class
+    nx,ny:integer;//число разбиений по X и Y
+    nsm:integer; // число случаев нагружения
+    eu:extended;  // модуль упругости
+    zad:array[1..4] of integer;// заделка сторон (левая, нижняя, верхняя, правая)
+    n_nu,n_zu:integer;// число нагруженных и закрепленных узлов
+    xm,ym:array[1..37]of extended;//координаты по 9 узлов для 3 случаев нагружения; 9 опорных точек; размеры области
+    pn:array[1..36,1..2] of extended;//силы по 9 узлов для 3 случаев нагружения; закрепление по осям 9 опорных точек
+    s_lin,s_for:string;      // размерности
+    number:array[1..36]of integer; //номера узлов (по 9 узлов для 3 случаев нагружения; 9 опорных точек)
+    count:integer;// количество узлов
+    n_nuz:array[1..3] of integer;//  число нагруженных узлов в каждом случае нагружения
+     Procedure Assign(T:Ttok);
+  end;
+
+implementation
+
+procedure TFerm.Assign(f:TFerm);
+var
+  i,j:integer;
+begin
+region_x:=f.region_x;
+region_Y:=f.region_y;
+
+
+  nst1:=f.nst1;
+  nyz1:=f.nyz1;
+  ny1:=f.ny1;
+  nsn1:=f.nsn1;
+  pltn:=f.pltn;
+  e1:=f.e1;
+  sd1:=f.sd1;
+  s_lin:=f.s_lin;
+  s_for:=f.s_for;
+  for i:=1 to 15 do
+    for j:=1 to 2 do
+      iTopN[i,j]:=f.iTopN[i,j];
+  for i:=1 to 9 do
+    for j:=1 to 2 do
+      begin
+        msn[i,j]:=f.msn[i,j];
+        corn[i,j]:=f.corn[i,j];
+      end;
+  for i:=1 to 9 do
+    Fn[i]:=f.Fn[i];
+  for i:=1 to 18 do
+    for j:=1 to 3 do
+      Pn[i,j]:=f.Pn[i,j];
+
+end;
+
+procedure TPlast.Assign(p:TPlast);
+var
+  i:integer;
+begin
+    dop1:=p.dop1;ton1:=p.ton1;
+    pltn:=p.pltn;            // Доп. напряжение и нач. толщина и плотность
+    kz1:=p.kz1;
+    kl1:=p.kl1;             // Число закреплений и сил(а не случаев нагружения)
+                                 // Q: случай нагружния всегда один ?!!!
+    kx1:=p.kx1;
+    ky1:=p.ky1;             // Количество узлов по X и Y
+    e1[1]:=p.e1[1];
+    e1[2]:=p.e1[2];    // Модуль упругости и коэффициент Пуассона
+    for i:=1 to 15 do begin
+          xm1[i]:=p.xm1[i];
+          ym1[i]:=p.ym1[i];
+                        end; // Координаты узлов
+    for i:=1 to plast_max_zak do begin
+      zak1[i]:=p.zak1[i];zak2[i]:=p.zak2[i];zak3[i]:=p.zak3[i];
+                        end; // Закрепления (номер узла, X и Y)
+    // Нагрузки (номер узла, признак нагружения(по X - 11, по Y - 22, по X и Y - 33), по X, по y)
+    for i:=1 to plast_max_for do begin
+            nomm[i]:=p.nomm[i];os[i]:=p.os[i];
+                                      end;
+    for i:=1 to plast_max_for do begin
+    nom11[i]:=p.nom11[i];nom22[i]:=p.nom22[i];
+                                      end;
+    s_lin:=p.s_lin;
+    s_for:=p.s_for;     // размерности
+
+
+end;
+
+procedure TTok.Assign(t:Ttok);
+var
+  i:integer;
+begin
+      nx:=t.nx;
+      ny:=t.ny;//число разбиений по X и Y
+    nsm:=t.nsm;// число случаев нагружения
+    eu:=t.eu;  // модуль упругости
+    for i:=1 to 4 do zad[i]:=t.zad[i];// заделка сторон (левая, нижняя, верхняя, правая)
+    n_nu:=t.n_nu;
+    n_zu:=t.n_zu;
+    for i:=1 to 37 do begin
+    // число нагруженных и закрепленных узлов
+    xm[i]:=t.xm[i]; ym[i]:=t.ym[i];
+                       end;//координаты по 9 узлов для 3 случаев нагружения; 9 опорных точек; размеры области
+    for i:=1 to 36 do begin
+    pn[i,1]:=t.pn[i,1];pn[i,2]:=t.pn[i,2];//силы по 9 узлов для 3 случаев нагружения; закрепление по осям 9 опорных точек
+    number[i]:=t.number[i]; //номера узлов (по 9 узлов для 3 случаев нагружения; 9 опорных точек)
+                       end;
+    count:=t.count;// количество узлов
+    n_nuz[1]:=t.n_nuz[1];n_nuz[2]:=t.n_nuz[2];n_nuz[3]:=t.n_nuz[3];//  число нагруженных узлов в каждом случае нагружения
+    s_lin:=t.s_lin;
+    s_for:=t.s_for;      // размерности
+
+end;
+
+end.
+
+
+
+
+
+
